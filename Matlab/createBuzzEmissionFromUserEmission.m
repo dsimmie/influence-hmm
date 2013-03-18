@@ -1,3 +1,7 @@
+% Create the Buzzz emission matrix from the user-based matrix.
+% The user matrix has three states the buzz version has four.
+% The first state is the same for both the others are assigned from their
+% most likely buzz state.
 function [ buzzEmis ] = createBuzzEmissionFromUserEmission( userEmis )
 
 buzzEmis(1,:) = userEmis(1,:);
@@ -12,12 +16,6 @@ veryHighBuzz = userEmisNorm(12:16);
 buzzEmis(2,[2,4:7]) = (someBuzz/norm(someBuzz)) .^ 2;
 buzzEmis(3,8:11) = (highBuzz/norm(highBuzz)) .^ 2;
 buzzEmis(4,12:16) = (veryHighBuzz/norm(veryHighBuzz)) .^ 2;
-
-% Add some positive gaussian noise to remove zero values.
-% buzzEmis(1,:) = abs(awgn(buzzEmis(1,:),50));
-% buzzEmis(2,:) = abs(awgn(buzzEmis(2,:),50));
-% buzzEmis(3,:) = abs(awgn(buzzEmis(3,:),50));
-% buzzEmis(4,:) = abs(awgn(buzzEmis(4,:),50));
 
 % Take discrecepancy from the max value.
 [m1,max1] = max(buzzEmis(1,:));
@@ -35,6 +33,8 @@ buzzEmis(2,max2) = buzzEmis(2,max2) + (-1*diff2);
 buzzEmis(3,max3) = buzzEmis(3,max3) + (-1*diff3);
 buzzEmis(4,max4) = buzzEmis(4,max4) + (-1*diff4);
 
+% As dealing with probabilities all rows need to sum to 1.
+% Checking the infinity norm of the matrix is a shortcut to verifying this.
 if(norm(buzzEmis,inf) ~= 1)
     error('Error in function logic the infinity norm of buzz emission matrix must be 1');
 end

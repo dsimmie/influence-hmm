@@ -1,5 +1,7 @@
-function[emis, sampleData] = createEmissionRows(procPath, imagePath, retweets, mentions, unique_interactions, rtMtUiHeaders, rtMtUiData, numStates, numSymbols)
-% Requires influence data already loaded.
+% Create the user-based initial emission rows from samplnig the data and
+% examining the different distributions of influence relevant data.
+function[emis] = createEmissionRows(retweets, mentions, unique_interactions, rtMtUiHeaders, rtMtUiData, numStates, numSymbols)
+
 mtpd = mentions.data;
 rtpd = retweets.data;
 uipd = unique_interactions.data;
@@ -21,7 +23,6 @@ veryHighInfluencers = union(union(mtSample3, uiSample3),rtSample3);
 highInfluencers = union(union(mtSample2, uiSample2),rtSample2);
 notInfluencers = union(union(mtSample1, uiSample1),rtSample1);
 
-% Question: Should we sample or use all?
 vhSample = veryHighInfluencers;
 hSample = setdiff(highInfluencers, vhSample);
 nSample = setdiff(setdiff(notInfluencers(randsample(1:length(notInfluencers), 6000)),highInfluencers), veryHighInfluencers);
@@ -36,37 +37,10 @@ vhData = rtMtUiData(vhMembers==1,:);
 hData = rtMtUiData(hMembers==1,:);
 nData = rtMtUiData(nMembers==1,:);
 
-sampleData = rtMtUiData(nMembers | hMembers | vhMembers,:);
-
-% Put together headers and data and write to csv file.
-vhHeaders = rtMtUiHeaders(vhMembers==1);
-hHeaders = rtMtUiHeaders(hMembers==1);
-nHeaders = rtMtUiHeaders(nMembers==1);
-
-firstRow = retweets.textdata(1,:);
-
-cellCsv(firstRow, vhHeaders, vhData, strcat(procPath, 'very-high-influence-sample.csv'));
-cellCsv(firstRow, hHeaders, hData, strcat(procPath, 'high-influence-sample.csv'));
-cellCsv(firstRow, nHeaders, nData, strcat(procPath, 'no-influence-sample.csv'));
-
 % Flatten this matrix into a column vector
 vhVector = reshape(vhData.',[],1);
 hVector = reshape(hData.',[],1);
 nVector = reshape(nData.',[],1);
-
-% Uncomment to plot and save historgrams of the sample distributions
-%vh = figure;
-%hist(vhVector);
-%print(vh, '-depsc', strcat(imagePath, 'very-high-influence-sample-dist.eps'))
-
-%h = figure;
-%hist(hVector);
-%print(h, '-depsc', strcat(imagePath, 'high-influence-sample-dist.eps'))
-
-%nh = figure;
-%hist(nVector);
-%print(nh, '-depsc', strcat(imagePath, 'no-influence-sample-dist.eps'))
-
 
 % Create the emission rows for the initial model from the data
 vhFreqVec = getFrequencyVector(vhVector, numSymbols);

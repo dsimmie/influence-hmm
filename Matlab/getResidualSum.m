@@ -1,5 +1,10 @@
+% Get the residual sum for a matrix E.
+% Looks for rank deficiencies in the input matrix.
+% If an element is close to zero then the row is linearly depenedent on
+% other rows in the matrix.
+% See "Components Analysis of hidden Markov model in
+% Computer Vision" by Caelli and McCane for more information.
 function[S] = getResidualSum(E)
-
 
 S = zeros(1,size(E,2));
 

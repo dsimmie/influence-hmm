@@ -1,3 +1,10 @@
+% Gets the BuzzRanks for all users in the dataset.
+% Parameters:
+% screenNames: the screen names of the users
+% observations: the discrete integer symbols for each user per timepoint.
+% trans: the model transition matrix
+% emis: the emission matrix
+% outputFile: the path to the temporal buzz ranks output file
 function[buzzUsers] = getBuzzRankedUsers(screenNames, observations, trans, emis, outputFile)
     
 seqLen = size(observations, 1);
@@ -20,17 +27,18 @@ for i=1:seqLen
     temporalBuzz(i,2:end) = num2cell(tr_vit_path);
 end
 
+% Save the results of the temporal buzz ranked users (for each time point)
+% to file.
 fid = fopen(outputFile,'wt');
-
 formatString = repmat('%2.4f,', 1, obsLen-1);
 formatString = ['%s, ', formatString, '%2.4f\n'];
 
-% Ignoring header for now as involves complicated date handling.
 for i=1:seqLen
     fprintf(fid, formatString, temporalBuzz{i,1}, temporalBuzz{i,2:end});
 end
 fclose(fid);
 
+% Transform the Viterbi Path using the Buzz function.
 function[expViterbiPath] = transformViterbiPath(viterbiPath)
 
 expViterbiPath = zeros(1,length(viterbiPath));
