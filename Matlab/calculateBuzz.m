@@ -1,3 +1,4 @@
+function[topNPrct] = calculateBuzz(data, names, trans, emis, nprct, outputFile)
 % Calculate the top n percent of the Buzz ranked users.
 % The output for the temporal buzz ranks are stored in the output file.
 
@@ -9,8 +10,6 @@
 % nprct: the numeric percentage to choose
 % outputFile: the path to the output file for storing tthe temporal buzz
 % users output.
-function[topNPrct] = calculateBuzz(data, names, trans, emis, nprct, outputFile)
-
 rlist = getBuzzRankedUsers(names, data, trans, emis, outputFile);
 
 srList = sortcell(rlist,1);

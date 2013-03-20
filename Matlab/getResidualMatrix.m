@@ -1,7 +1,7 @@
+function[E] = getResidualMatrix(C)
 % Get the residual matrix for the input matrix.
 % See: "Components Analysis of hidden Markov model in
 % Computer Vision" by Caelli and McCane for more information.
-function[E] = getResidualMatrix(C)
 
 % Create a new matrix with 
 E = zeros(rank(C(2:end,:)), size(C,2));

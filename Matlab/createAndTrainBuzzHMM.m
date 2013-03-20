@@ -1,20 +1,12 @@
-% Requires external transmission matrix.
-% For now use hard-coded
+% Import the data into the workspace.
+initialiseBuzzModel;
 
-% Import the data
-importBuzzNormalizedWeeklyData
-
-% Configure file paths
-configureBuzzHmmFiles
-
-% Create the emission matrix
-createBuzzEmissionFromUserEmission
+% Assess quality of initial trained/estimated matrices.
+assessHMMQuality(trans, emis);
 
 % Train the data
-trainAndWriteMatrices
+[trainedTrans, trainedEmis] = trainAndWriteMatrices(data, trans, emis);
 
-% Asses quality of trained/estimated matrices.
-assessHMMQuality
-
-% Calculate buzz rankings and produce Buzz Analysis
-exportHmmBuzz
+% Calculate buzz rankings and produce Buzz Analysis files (temporal and
+% rank).
+exportHmmBuzzRank(networkFile, data, headers, trainedTrans, trainedEmis, nprct, analysisFile, outputFile)

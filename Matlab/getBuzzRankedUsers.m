@@ -1,3 +1,4 @@
+function[buzzUsers] = getBuzzRankedUsers(screenNames, observations, trans, emis, outputFile)
 % Gets the BuzzRanks for all users in the dataset.
 % Parameters:
 % screenNames: the screen names of the users
@@ -5,8 +6,7 @@
 % trans: the model transition matrix
 % emis: the emission matrix
 % outputFile: the path to the temporal buzz ranks output file
-function[buzzUsers] = getBuzzRankedUsers(screenNames, observations, trans, emis, outputFile)
-    
+
 seqLen = size(observations, 1);
 obsLen = size(observations, 2);
 

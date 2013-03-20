@@ -1,6 +1,6 @@
+function[emis] = createEmissionRows(retweets, mentions, unique_interactions, headers, data, numStates, numSymbols)
 % Create the user-based initial emission rows from samplnig the data and
 % examining the different distributions of influence relevant data.
-function[emis] = createEmissionRows(retweets, mentions, unique_interactions, rtMtUiHeaders, rtMtUiData, numStates, numSymbols)
 
 mtpd = mentions.data;
 rtpd = retweets.data;
@@ -28,14 +28,14 @@ hSample = setdiff(highInfluencers, vhSample);
 nSample = setdiff(setdiff(notInfluencers(randsample(1:length(notInfluencers), 6000)),highInfluencers), veryHighInfluencers);
 
 % Find the indices of the sample users from population screen names.
-vhMembers = ismember(rtMtUiHeaders, vhSample);
-hMembers = ismember(rtMtUiHeaders, hSample);
-nMembers = ismember(rtMtUiHeaders, nSample);
+vhMembers = ismember(headers, vhSample);
+hMembers = ismember(headers, hSample);
+nMembers = ismember(headers, nSample);
 
 % Get all the data elements from the observations data and combine those
-vhData = rtMtUiData(vhMembers==1,:);
-hData = rtMtUiData(hMembers==1,:);
-nData = rtMtUiData(nMembers==1,:);
+vhData = data(vhMembers==1,:);
+hData = data(hMembers==1,:);
+nData = data(nMembers==1,:);
 
 % Flatten this matrix into a column vector
 vhVector = reshape(vhData.',[],1);
