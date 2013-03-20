@@ -2,7 +2,6 @@
 % model.
 
 dataPath = '~/data/';
-outPath = '~/data/out/';
 
 % Network centrality file path
 networkFile = strcat(dataPath,'network-nodes-table.csv');
@@ -17,8 +16,8 @@ data = modelData.data;
 headers = modelData.textdata(2:end,1);
 
 % Output Files
-analysisFile = strcat(outPath,'buzz-analysis.csv');
-outputFile = strcat(outPath,'buzz-temporal-output.csv');
+rankFile = strcat(dataPath,'buzz-rank.csv');
+outputFile = strcat(dataPath,'buzz-temporal-output.csv');
 
 % Use the transition matrix created by R.
 % TODO read from file instead of hard-coded.

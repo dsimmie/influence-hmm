@@ -1,4 +1,4 @@
-function exportHmmBuzzRank( networkFile, data, headers, trans, emis, nprct, analysisFile, outputFile )
+function exportHMMBuzz( networkFile, data, headers, trans, emis, nprct, rankFile, outputFile )
 % Export the BuzzRank and also the temporal Buzz for each user.
 % At this point the offline reach data is also integrated via loading from
 % file.
@@ -27,7 +27,7 @@ rowCount = size(buzzRanks,1);
 
 % Produce file with name, in-degree, reach, buzz
 % Export as csv
-fid = fopen(analysisFile,'wt');
+fid = fopen(rankFile,'wt');
 fprintf(fid, 'Ident,In-Deg,Reach,Buzz\n');
 for i=1:rowCount
     row = getRow(sortedNetCell, sortedNetHeaders, buzzRanks{i,2});

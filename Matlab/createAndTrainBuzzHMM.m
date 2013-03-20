@@ -9,4 +9,4 @@ assessHMMQuality(trans, emis);
 
 % Calculate buzz rankings and produce Buzz Analysis files (temporal and
 % rank).
-exportHmmBuzzRank(networkFile, data, headers, trainedTrans, trainedEmis, nprct, analysisFile, outputFile)
+exportHmmBuzz(networkFile, data, headers, trainedTrans, trainedEmis, nprct, rankFile, outputFile)

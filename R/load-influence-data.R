@@ -1,21 +1,24 @@
-rawpath <- '/Users/dsimmie/Dropbox/research/Imperial/influence-evo/data/shared/data/new-model/raw/'
-procpath <- '/Users/dsimmie/Dropbox/research/Imperial/influence-evo/data/shared/data/new-model/processed/'
-rtpwpath <- paste0(rawpath,'retweets_per_week.csv')
-mtpwpath <- paste0(rawpath,'mentions_per_week.csv')
-uipwpath <- paste0(rawpath,'unique_interactions_per_week.csv')
-tpwpath <- paste0(rawpath,'tweets_per_week.csv')
+data.path <- '~/data/'
+rtpwpath <- paste0(data.path,'retweets_per_week.csv')
+mtpwpath <- paste0(data.path,'mentions_per_week.csv')
+uipwpath <- paste0(data.path,'unique_interactions_per_week.csv')
+tpwpath <- paste0(data.path,'tweets_per_week.csv')
 
-norm.rtpwpath <- paste0(procpath,'buzz_norm_retweets_per_week.csv')
-norm.mtpwpath <- paste0(procpath,'buzz_norm_mentions_per_week.csv')
-norm.uipwpath <- paste0(procpath,'buzz_norm_unique_interactions_per_week.csv')
+lab.rtpw <- read.csv(rtpwpath)
+lab.mtpw <- read.csv(mtpwpath)
+lab.uipw <- read.csv(uipwpath)
 
-rtpw <- read.csv(rtpwpath, colClasses=c('NULL', rep('numeric', 43)))
-mtpw <- read.csv(mtpwpath, colClasses=c('NULL', rep('numeric', 43)))
-uipw <- read.csv(uipwpath, colClasses=c('NULL', rep('numeric', 43)))
+rtpw <- lab.rtpw[2:dim(lab.rtpw)[1], 2:dim(lab.rtpw)[2]]
+mtpw <- lab.mtpw[2:dim(lab.mtpw)[1], 2:dim(lab.mtpw)[2]]
+uipw <- lab.uipw[2:dim(lab.uipw)[1], 2:dim(lab.uipw)[2]]
+
 tpw <- read.csv(tpwpath)
 lab.tpw = tpw[ ,1:44]
 tpw <- tpw[ ,2:44]
 
-norm.rtpw <- read.csv(norm.rtpwpath, colClasses=c('NULL', rep('numeric', 43)))
-norm.mtpw <- read.csv(norm.mtpwpath, colClasses=c('NULL', rep('numeric', 43)))
-norm.uipw <- read.csv(norm.uipwpath, colClasses=c('NULL', rep('numeric', 43)))
+tmp.buzz <- read.csv(paste0(data.path,'buzz-temporal-output.csv'))
+
+obs.dates <- names(rtpw)[1:43]
+
+names(tmp.buzz)[1] <- "Ident"
+names(tmp.buzz)[2:44] <- obs.dates
