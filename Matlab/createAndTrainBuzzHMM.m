@@ -5,8 +5,8 @@ initialiseBuzzModel;
 assessHMMQuality(trans, emis);
 
 % Train the data
-[trainedTrans, trainedEmis] = trainAndWriteMatrices(data, trans, emis);
+[trainedTrans, trainedEmis] = trainAndWriteMatrices(dataPath, data, trans, emis);
 
 % Calculate buzz rankings and produce Buzz Analysis files (temporal and
 % rank).
-exportHmmBuzz(networkFile, data, headers, trainedTrans, trainedEmis, nprct, rankFile, outputFile)
+exportHMMBuzz(networkFile, data, headers, trainedTrans, trainedEmis, 1, rankFile, outputFile)

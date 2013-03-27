@@ -16,7 +16,7 @@ data = observations.data;
 headers = observations.textdata(2:end,1);
 
 % Output Files
-rankFile = strcat(dataPath,'buzz-rank.csv');
+rankFile = strcat(dataPath,'buzz-rank-output.csv');
 outputFile = strcat(dataPath,'buzz-temporal-output.csv');
 
 % Use the transition matrix created by R.
