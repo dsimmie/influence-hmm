@@ -25,16 +25,38 @@ sortedNetHeaders = sortedNetCell(:,1);
 
 rowCount = size(vsr,1);
 
-fid = fopen(analysisFile,'wt');
-fprintf(fid, 'Ident,In-Deg,Reach,Buzz\n');
-for i=1:rowCount
-    row = getRow(sortedNetCell, sortedNetHeaders, vsr{i,2});
-    fprintf(fid, '%s,%d,%1.8d,%3.2d\n', vsr{i,2}, row{2}, row{3}, vsr{i,1});
-end
-fclose(fid);
+display(size(vsr,1))
 
+i=0;
+try
+    fid = fopen(analysisFile,'wt');
+    fprintf(fid, 'Ident,In-Deg,Reach,Buzz\n');
+    for i=1:rowCount-1
+    %     if(i >= 8975)
+    %         display(i)
+    %         display(sprintf(fid, '%s,%d,%1.8d,%3.2d\n', vsr{i,2}, row{2}, row{3}, vsr{i,1}));
+    %     end
+    %     row = getRow(sortedNetCell, sortedNetHeaders, vsr{i,2});
+    %     if(i >= 8975 || isempty(row))
+    %         display(sprintf(fid, '%s,%d,%1.8d,%3.2d\n', vsr{i,2}, row{2}, row{3}, vsr{i,1}));
+    %     end
+        row = getRow(sortedNetCell, sortedNetHeaders, vsr{i,2});
+        fprintf(fid, '%s,%d,%1.8d,%3.2d\n', vsr{i,2}, row{2}, row{3}, vsr{i,1});
+    end
+    fclose(fid);
+catch err
+    display(i)
+    rethrow(err);
+end
+        
 function[row] = getRow( sortedNetCell, sortedNetHeaders, identifier )
 
-[i,j] = ind2sub(size(sortedNetHeaders), strmatch(identifier, sortedNetHeaders, 'exact'));
+[i,j] = ind2sub(size(sortedNetHeaders), strmatch(getScreenName(identifier), sortedNetHeaders, 'exact'));
 
 row = sortedNetCell(i,:);
+
+function screenName = getScreenName(nameId)
+
+lastUIndex = max(findstr('_', nameId));
+
+screenName = nameId(1:lastUIndex-1);
