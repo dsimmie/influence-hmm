@@ -10,12 +10,12 @@ buzzEmis(2:4,:) = zeros(3,size(userEmis, 2));
 userEmisNorm = sum(userEmis/norm(sum(userEmis)));
 
 someBuzz = userEmisNorm([3,5,7]);
-highBuzz = userEmisNorm([2,4,6,8,9,11]);
-veryHighBuzz = userEmisNorm([10,12:16]);
+highBuzz = userEmisNorm([2,4,9,11]);
+veryHighBuzz = userEmisNorm([6,8,10,12:16]);
 
 buzzEmis(2,[3,5,7]) = (someBuzz/norm(someBuzz)) .^ 2;
-buzzEmis(3,[2,4,6,8,9,11]) = (highBuzz/norm(highBuzz)) .^ 2;
-buzzEmis(4,[10,12:16]) = (veryHighBuzz/norm(veryHighBuzz)) .^ 2;
+buzzEmis(3,[2,4,9,11]) = (highBuzz/norm(highBuzz)) .^ 2;
+buzzEmis(4,[6,8,10,12:16]) = (veryHighBuzz/norm(veryHighBuzz)) .^ 2;
 
 % Take discrecepancy from the max value.
 [m1,max1] = max(buzzEmis(1,:));

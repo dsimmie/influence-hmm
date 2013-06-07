@@ -27,27 +27,18 @@ rowCount = size(vsr,1);
 
 display(size(vsr,1))
 
-i=0;
-try
-    fid = fopen(analysisFile,'wt');
-    fprintf(fid, 'Ident,In-Deg,Reach,Buzz\n');
-    for i=1:rowCount-1
-    %     if(i >= 8975)
-    %         display(i)
-    %         display(sprintf(fid, '%s,%d,%1.8d,%3.2d\n', vsr{i,2}, row{2}, row{3}, vsr{i,1}));
-    %     end
-    %     row = getRow(sortedNetCell, sortedNetHeaders, vsr{i,2});
-    %     if(i >= 8975 || isempty(row))
-    %         display(sprintf(fid, '%s,%d,%1.8d,%3.2d\n', vsr{i,2}, row{2}, row{3}, vsr{i,1}));
-    %     end
-        row = getRow(sortedNetCell, sortedNetHeaders, vsr{i,2});
-        fprintf(fid, '%s,%d,%1.8d,%3.2d\n', vsr{i,2}, row{2}, row{3}, vsr{i,1});
+fid = fopen(analysisFile,'wt');
+fprintf(fid, 'Ident,In-Deg,Reach,Buzz\n');
+for i=1:rowCount-1
+    try
+        identifier = vsr{i,2};
+        row = getRow(sortedNetCell, sortedNetHeaders, identifier);
+        fprintf(fid, '%s,%d,%1.8d,%3.2d\n', identifier, row{2}, row{3}, vsr{i,1});
+    catch err
+        display(strcat('Could not find user: ',vsr{i,2}));
     end
-    fclose(fid);
-catch err
-    display(i)
-    rethrow(err);
 end
+fclose(fid);
         
 function[row] = getRow( sortedNetCell, sortedNetHeaders, identifier )
 
