@@ -74,7 +74,6 @@ for i=1:numUsers
                 maxPosteriors = maxPosteriorStates(k,trainLen+1:trainLen+j);
             catch err
                 error('Error getting max posterior state')
-                rethrow(err)
             end
             randnb = 1 + nbinrnd(2,0.8,1,j);
             randnb(randnb>4) = 4;
