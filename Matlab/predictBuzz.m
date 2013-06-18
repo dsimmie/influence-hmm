@@ -14,11 +14,13 @@ testData = data(:,testLen:end);
 predictedHiddens = zeros(nonOnesNumUsers,testLen);
 controlDists = zeros(nonOnesNumUsers,testLen);
 predDists = zeros(nonOnesNumUsers,testLen);
+naiveDists = zeros(nonOnesNumUsers,testLen);
 reducedData = zeros(nonOnesNumUsers,obsLen);
 trainedPaths = zeros(nonOnesNumUsers,testLen);
 
 % For all users
 k=1;
+sampleCount = 10;
 for i=1:numUsers
     userTrainedData = trainingData(i,:);
     userTrainedModel = modelBW(i);
@@ -32,6 +34,7 @@ for i=1:numUsers
     
     controlDist = zeros(1,testLen);
     predDist = zeros(1,testLen);
+    naiveDist = zeros(1,testLen);
     
     % Calculate posterior state probabilities for 1-t
     pStates = hmmdecode(userTrainedData, userTrans, trainEmis);
@@ -46,11 +49,12 @@ for i=1:numUsers
        
     % For each sequence in testing phase
     for j=1:testLen
-        predictionScore = zeros(1,k);
-        controlScore = zeros(1,k);
+        predictionScore = zeros(1,n);
+        controlScore = zeros(1,n);
+        naiveScore = zeros(1,n);
         nextObs = zeros(1,n);
         % Repeat prediction n times and average result.
-        for n=1:10
+        for n=1:sampleCount
             % Most likely next state = max posterior state probability * transition
             % probability
             % Find max posterior state for current timepoint.
@@ -78,14 +82,17 @@ for i=1:numUsers
             randnb = 1 + nbinrnd(2,0.8,1,j);
             randnb(randnb>4) = 4;
             controlPath = randnb;
+            naivePath = ones(1,j);
 
             predictionScore(n) = predictScore(maxPosteriors, predictedHidden(1:j));
             controlScore(n) = predictScore(maxPosteriors, controlPath);
+            naiveScore(n) = predictScore(maxPosteriors, naivePath);
             
             % Add the distance from prediction for active users.
-            if(n==10)
+            if(n==sampleCount)
                 predDist(j) = mean(predictionScore);
                 controlDist(j) = mean(controlScore);
+                naiveDist(j) = mean(naiveScore);
             end
         end
         % Add the most common generated observation onto the existing data.
@@ -110,15 +117,17 @@ for i=1:numUsers
     trainedPaths(k,:) = maxPosteriors;
     predDists(k,:) = predDist;
     controlDists(k,:) = controlDist;
+    naiveDists(k,:) = naiveDist;
     k = k+1;
 end
 
-inf.analysis.path = 'Users/dsimmie/Dropbox/research/Imperial/influence-evo/workspaces/influence-analysis/';
-dlmwrite(strcat(inf.analysis.path,'control-dists.csv'), controlDists);
-dlmwrite(strcat(inf.analysis.path,'predicted-dists.csv')', predDists);
-dlmwrite(strcat(inf.analysis.path,'reduced-data.csv')', reducedData);
-dlmwrite(strcat(inf.analysis.path,'trained-paths.csv')', trainedPaths);
-dlmwrite(strcat(inf.analysis.path,'predicted-states.csv')', predictedHiddens);
+analysis.path = '/Users/dsimmie/Dropbox/research/Imperial/influence-evo/workspaces/influence-analysis/results/';
+dlmwrite(strcat(analysis.path,'predicted-dists.csv')', predDists);
+dlmwrite(strcat(analysis.path,'control-dists.csv'), controlDists);
+dlmwrite(strcat(analysis.path,'naive-dists.csv')', naiveDists);
+dlmwrite(strcat(analysis.path,'reduced-data.csv')', reducedData);
+dlmwrite(strcat(analysis.path,'trained-paths.csv')', trainedPaths);
+dlmwrite(strcat(analysis.path,'predicted-states.csv')', predictedHiddens);
     
 % Missing data and transition model only predictions
 % Mixing time
