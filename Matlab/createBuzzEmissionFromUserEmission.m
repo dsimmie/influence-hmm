@@ -1,18 +1,21 @@
 % Create the Buzzz emission matrix from the user-based matrix.
-% The user matrix has three states the buzz version has four.
 % The first state is the same for both the others are assigned from their
 % most likely buzz state.
 function [ buzzEmis ] = createBuzzEmissionFromUserEmission( userEmis )
 
+% Row 1 of buzz = row 1 of user emission matrix.
 buzzEmis(1,:) = userEmis(1,:);
+% Create empty three other rows.
 buzzEmis(2:4,:) = zeros(3,size(userEmis, 2));
 
+% UN the normalised user emission matrix.
 userEmisNorm = sum(userEmis/norm(sum(userEmis)));
 
 someBuzz = userEmisNorm([3,5,7]);
 highBuzz = userEmisNorm([2,4,9,11]);
 veryHighBuzz = userEmisNorm([6,8,10,12:16]);
 
+% Populate the buzz emission rows by normalising the buzz vectors.
 buzzEmis(2,[3,5,7]) = (someBuzz/norm(someBuzz)) .^ 2;
 buzzEmis(3,[2,4,9,11]) = (highBuzz/norm(highBuzz)) .^ 2;
 buzzEmis(4,[6,8,10,12:16]) = (veryHighBuzz/norm(veryHighBuzz)) .^ 2;

@@ -5,5 +5,4 @@ if(length(actualPosteriorStates) ~= length(predictedStates))
 end
 
 score = sum(actualPosteriorStates == predictedStates)/length(actualPosteriorStates);
-score = score;
 
