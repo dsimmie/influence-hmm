@@ -21,6 +21,32 @@ trainedPaths = zeros(nonOnesNumUsers,testLen);
 % For all users
 k=1;
 sampleCount = 10;
+
+predConfusion = zeros(nstates,nstates,testLen);
+controlConfusion = zeros(nstates,nstates,testLen);
+naiveConfusion = zeros(nstates,nstates,testLen);
+randConfusion = zeros(nstates,nstates,testLen);
+
+totalPredConfusion = zeros(nstates,nstates);
+totalControlConfusion = zeros(nstates,nstates);
+totalNaiveConfusion = zeros(nstates,nstates);
+totalRandConfusion = zeros(nstates,nstates);
+
+predPrecision = zeros(1, testLen);
+controlPrecision = zeros(1, testLen);
+naivePrecision = zeros(1, testLen);
+randPrecision = zeros(1, testLen);
+
+predRecall = zeros(1, testLen);
+controlRecall = zeros(1, testLen);
+naiveRecall = zeros(1, testLen);
+randRecall = zeros(1, testLen);
+
+predF1 = zeros(1, testLen);
+controlF1 = zeros(1, testLen);
+naiveF1 = zeros(1, testLen);
+randF1 = zeros(1, testLen);
+
 for i=1:numUsers
     userTrainedData = trainingData(i,:);
     userTrainedModel = modelBW(i);
@@ -49,10 +75,7 @@ for i=1:numUsers
        
     % For each sequence in testing phase
     for j=1:testLen
-        predictionScore = zeros(1,n);
-        controlScore = zeros(1,n);
-        naiveScore = zeros(1,n);
-        nextObs = zeros(1,n);
+        nextObs = zeros(1,sampleCount);
         % Repeat prediction n times and average result.
         for n=1:sampleCount
             % Most likely next state = max posterior state probability * transition
@@ -83,17 +106,44 @@ for i=1:numUsers
             randnb(randnb>4) = 4;
             controlPath = randnb;
             naivePath = ones(1,j);
+            randPath = randi([1, nstates], 1, j);
 
-            predictionScore(n) = predictScore(maxPosteriors, predictedHidden(1:j));
-            controlScore(n) = predictScore(maxPosteriors, controlPath);
-            naiveScore(n) = predictScore(maxPosteriors, naivePath);
+            predConfusion(:,:,j) = updateConfusionMatrix(predConfusion(:,:,j), maxPosteriors, predictedHidden(1:j));
+            controlConfusion(:,:,j) = updateConfusionMatrix(controlConfusion(:,:,j), maxPosteriors, controlPath);
+            naiveConfusion(:,:,j) = updateConfusionMatrix(naiveConfusion(:,:,j), maxPosteriors, naivePath);
+            randConfusion(:,:,j) = updateConfusionMatrix(randConfusion(:,:,j), maxPosteriors, randPath);
             
-            % Add the distance from prediction for active users.
-            if(n==sampleCount)
-                predDist(j) = mean(predictionScore);
-                controlDist(j) = mean(controlScore);
-                naiveDist(j) = mean(naiveScore);
-            end
+            [p,r,f] = multiclassF1(predConfusion(:,:,j));
+            predPrecision(j) = p;
+            [p,r,f] = multiclassF1(controlConfusion(:,:,j));
+            controlPrecision(j) = p;
+            [p,r,f] = multiclassF1(naiveConfusion(:,:,j));
+            naivePrecision(j) = p;
+            [p,r,f] = multiclassF1(randConfusion(:,:,j));
+            randPrecision(j) = p;
+            
+            [p,r,f] = multiclassF1(predConfusion(:,:,j));
+            predRecall(j) = r;
+            [p,r,f] = multiclassF1(controlConfusion(:,:,j));
+            controlRecall(j) = r;
+            [p,r,f] = multiclassF1(naiveConfusion(:,:,j));
+            naiveRecall(j) = r;
+            [p,r,f] = multiclassF1(randConfusion(:,:,j));
+            randRecall(j) = r;
+            
+            [p,r,f] = multiclassF1(predConfusion(:,:,j));
+            predF1(j) = f;
+            [p,r,f] = multiclassF1(controlConfusion(:,:,j));
+            controlF1(j) = f;
+            [p,r,f] = multiclassF1(naiveConfusion(:,:,j));
+            naiveF1(j) = f;
+            [p,r,f] = multiclassF1(randConfusion(:,:,j));
+            randF1(j) = f;
+            
+            totalPredConfusion = updateConfusionMatrix(totalPredConfusion, maxPosteriors, predictedHidden(1:j));
+            totalControlConfusion = updateConfusionMatrix(totalControlConfusion, maxPosteriors, controlPath);
+            totalNaiveConfusion = updateConfusionMatrix(totalNaiveConfusion, maxPosteriors, naivePath);
+            totalRandConfusion = updateConfusionMatrix(totalRandConfusion, maxPosteriors, randPath);
         end
         % Add the most common generated observation onto the existing data.
         updatedData(length(updatedData)+1) = mode(nextObs);
@@ -115,16 +165,21 @@ for i=1:numUsers
     end
     predictedHiddens(k,:) = predictedHidden;
     trainedPaths(k,:) = maxPosteriors;
-    predDists(k,:) = predDist;
-    controlDists(k,:) = controlDist;
-    naiveDists(k,:) = naiveDist;
     k = k+1;
 end
 
+% Convert confusion matrices to confusion tables for each class
+[totalPredPrec,totalPredRec,totalPredF1] = multiclassF1(totalPredConfusion);
+[totalControlPrec,totalControlRec,totalControlF1] = multiclassF1(totalControlConfusion);
+[totalNaivePrec,totalNaiveRec,totalNaiveF1] = multiclassF1(totalNaiveConfusion);
+
+% Determine precision/recall and f1 measure
+
+
 analysis.path = '/Users/dsimmie/Dropbox/research/Imperial/influence-evo/workspaces/influence-analysis/results/';
-dlmwrite(strcat(analysis.path,'predicted-dists.csv')', predDists);
-dlmwrite(strcat(analysis.path,'control-dists.csv'), controlDists);
-dlmwrite(strcat(analysis.path,'naive-dists.csv')', naiveDists);
+dlmwrite(strcat(analysis.path,'predicted-confusion-mat.csv')', totalPredConfusion);
+dlmwrite(strcat(analysis.path,'control-confusion-mat.csv'), totalControlConfusion);
+dlmwrite(strcat(analysis.path,'naive-confusion-mat.csv')', totalNaiveConfusion);
 dlmwrite(strcat(analysis.path,'reduced-data.csv')', reducedData);
 dlmwrite(strcat(analysis.path,'trained-paths.csv')', trainedPaths);
 dlmwrite(strcat(analysis.path,'predicted-states.csv')', predictedHiddens);
