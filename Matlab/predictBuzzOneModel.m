@@ -28,7 +28,7 @@ naiveConfusion = zeros(nstates,nstates,testLen);
 randConfusion = zeros(nstates,nstates,testLen);
 
 totalPredConfusion = zeros(nstates,nstates);
-totalNBinConfusion = zeros(nstates,nstates);
+totalControlConfusion = zeros(nstates,nstates);
 totalNaiveConfusion = zeros(nstates,nstates);
 totalRandConfusion = zeros(nstates,nstates);
 
@@ -49,12 +49,7 @@ randF1 = zeros(1, testLen);
 
 for i=1:numUsers
     userTrainedData = trainingData(i,:);
-    userTrainedModel = modelBW(i);
-    userTrans = userTrainedModel.A;
-    userEmis = userTrainedModel.emission;
     
-    trainTr = userTrans;
-    trainEmis = userEmis.T;
     updatedData = userTrainedData;
     predictedHidden = zeros(1,testLen);
     
@@ -63,7 +58,7 @@ for i=1:numUsers
     naiveDist = zeros(1,testLen);
     
     % Calculate posterior state probabilities for 1-t
-    pStates = hmmdecode(userTrainedData, userTrans, trainEmis);
+    pStates = hmmdecode(userTrainedData, trans, emis);
     
     obsSum = sum(data(i,:));
     
@@ -84,7 +79,7 @@ for i=1:numUsers
             [C,I] = max(pStates(:,end));
             % Pick next state using the current state transition
             % probability for sampling.
-            nextState = sampleDiscrete(trainTr(I, :));
+            nextState = sampleDiscrete(trans(I, :));
 
             try
                 predictedHidden(j) = nextState;
@@ -94,7 +89,7 @@ for i=1:numUsers
             end
 
             % Generate a sample observation.
-            nextObs(n) = sampleDiscrete(trainEmis(nextState, :));
+            nextObs(n) = sampleDiscrete(emis(nextState, :));
 
             % Store euclidean distance from predicted to actual.
             try
@@ -123,20 +118,8 @@ for i=1:numUsers
         % Add the most common generated observation onto the existing data.
         updatedData(length(updatedData)+1) = mode(nextObs);
 
-        % Update model with generated evidence
-        [updatedTrain,updatedEmis] = hmmtrain(updatedData, trainTr, trainEmis);
-
-        % Hack to fix case where poorly trained model is re-trained and
-        % produces all zero entries.
-        if(norm(trainTr,inf) ~= 0)
-            trainTr = updatedTrain;
-        end
-        if(norm(trainEmis,inf) ~= 0)
-            trainEmis = updatedEmis;
-        end
-
         % Update posterior state probabilities for t+1
-        pStates = hmmdecode(updatedData, trainTr, trainEmis);
+        pStates = hmmdecode(updatedData, trans, emis);
     end
     predictedHiddens(k,:) = predictedHidden;
     trainedPaths(k,:) = maxPosteriors;
@@ -145,7 +128,7 @@ end
 
 analysis.path = '/Users/dsimmie/Dropbox/research/Imperial/influence-evo/workspaces/influence-analysis/results/';
 dlmwrite(strcat(analysis.path,'predicted-confusion-mat.csv')', totalPredConfusion);
-dlmwrite(strcat(analysis.path,'control-confusion-mat.csv'), totalNBinConfusion);
+dlmwrite(strcat(analysis.path,'control-confusion-mat.csv'), totalControlConfusion);
 dlmwrite(strcat(analysis.path,'naive-confusion-mat.csv')', totalNaiveConfusion);
 dlmwrite(strcat(analysis.path,'reduced-data.csv')', reducedData);
 dlmwrite(strcat(analysis.path,'trained-paths.csv')', trainedPaths);

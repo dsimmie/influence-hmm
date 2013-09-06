@@ -1,5 +1,6 @@
 obsLen = size(data, 2);
 numUsers = size(data,1);
+nonOnesNumUsers = numUsers - sum(sum(data, 2) == obsLen);
 maxPosteriorStates = zeros(nonOnesNumUsers, len);
 
 k=1;

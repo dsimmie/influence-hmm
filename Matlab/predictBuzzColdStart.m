@@ -1,0 +1,4 @@
+initialiseBuzzModel;
+trainUsingEM;
+getMaxPosteriorStates;
+predictBuzz;
