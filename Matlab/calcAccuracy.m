@@ -1,4 +1,4 @@
-function [ accuracy ] = calcAccuracy(confMat)
+ function [ accuracy ] = calcAccuracy(confMat)
 %UNTITLED9 Summary of this function goes here
 %   Detailed explanation goes here
 noBuzzConfTab = confusionTable(confMat, 1);
