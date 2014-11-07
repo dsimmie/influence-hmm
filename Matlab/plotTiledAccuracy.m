@@ -14,7 +14,7 @@ plot(randData, '.'); hold off;
 axis([0,22,0,1]);
 xlabel('Weeks', 'FontSize', 16);
 ylabel(ylab, 'FontSize', 16);
-%legend('Buzz','Neg. Bin.','Ones','Uniform');
+legend('Buzz','Neg. Bin.','Ones','Uniform');
 
 [buzzData,nbinData,naiveData,randData] = accuracy(buzzAccuracy, nbinAccuracy, naiveAccuracy, randAccuracy, 'someBuzz', type);
 
@@ -38,7 +38,7 @@ plot(randData, '.'); hold off;
 axis([0,22,0,1]);
 xlabel('Weeks', 'FontSize', 16);
 ylabel(ylab, 'FontSize', 16);
-%legend('Buzz','Neg. Bin.','Ones','Uniform');
+legend('Buzz','Neg. Bin.','Ones','Uniform');
 
 
 [buzzData,nbinData,naiveData,randData] = accuracy(buzzAccuracy, nbinAccuracy, naiveAccuracy, randAccuracy, 'vhighBuzz', type);
@@ -51,5 +51,5 @@ plot(randData, '.'); hold off;
 axis([0,22,0,1]);
 xlabel('Weeks', 'FontSize', 16);
 ylabel(ylab, 'FontSize', 16);
-%legend('Buzz','Neg. Bin.','Ones','Uniform');
+legend('Buzz','Neg. Bin.','Ones','Uniform');
 
